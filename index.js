@@ -170,6 +170,19 @@ window.setInterval(() => {
         }))
 }, SPAWN_TIME)
 
+function circleCollision(circle1, circle2) {
+    const xDifference = circle2.position.x - circle1.position.x
+    const yDifference = circle2.position.y - circle1.position.y
+
+    const distance = Math.sqrt(Math.pow(xDifference, 2) + Math.pow(yDifference, 2))
+
+    if (distance <= circle1.radius + circle2.radius) {
+        return true
+    }
+
+    return false
+}
+
 function animate() {
     window.requestAnimationFrame(animate)
 
@@ -197,13 +210,21 @@ function animate() {
         const astroid = astroids[i]
         astroid.update()
 
-
         if (astroid.position.x + astroid.radius < 0 || 
             astroid.position.x - astroid.radius > canvas.width ||
             astroid.position.y - astroid. radius > canvas.height ||
             astroid.position.y + astroid.radius < 0
         ) {
             projectiles.splice(i, 1)
+        }
+
+        for (let j = projectiles.length - 1; j >= 0; j--) {
+            const projectile = projectiles[j]
+
+            if(circleCollision(astroid, projectile)){
+                astroids.splice(i, 1)
+                projectiles.splice(j, 1)
+            }
         }
     }
     
